@@ -1,0 +1,24 @@
+[project]
+name = "gitlab-dumper"
+version = "1.0.0"
+description = "CLI tool for dump Gitlab projects"
+
+
+[tool.black]
+line-length = 119
+target-version = ['py310']
+include = '\.pyi?$'
+
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", "src",
+]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore:`json_encoders` is deprecated",
+]
+
+[tool.flake8]
+max-complexity = 15
+max-line-length = 119
