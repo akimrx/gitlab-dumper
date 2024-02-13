@@ -2,7 +2,7 @@ import click
 from tabulate import tabulate
 
 from src._settings import get_settings, get_logger
-from src._gitlab import get_gitlab_client
+from src._gitlab import get_gitlab_client, Group
 
 logger = get_logger()
 gitlab = get_gitlab_client(get_settings())
@@ -25,19 +25,19 @@ def list_groups(parents_only: bool, subgroups: bool, exclude: str | None = None)
 
     available_groups = gitlab.fetch_available_groups(only_parent_groups=parents_only, exclude=exclude)
 
+    def with_subgroup_formatter(group: Group) -> list[str]:
+        subgroups = group.subgroups.list(all=True, iterator=True)
+
+        return [
+            group.id,
+            group.path,
+            group.full_path,
+            ", ".join(map(lambda sg: sg.path, subgroups)) or "—",
+        ]
+
     if subgroups:
         headers = ["id", "slug", "fully qualified slug", "subgroups"]
-        table_data = list(
-            map(
-                lambda g: [
-                    g.id,
-                    g.path,
-                    g.full_path,
-                    ", ".join(map(lambda sg: sg.path, g.subgroups.list())) or "—",
-                ],
-                available_groups,
-            )
-        )
+        table_data = map(with_subgroup_formatter, available_groups)
     else:
         headers = ["id", "slug", "fully qualified slug", "url"]
         table_data = map(lambda g: [g.id, g.path, g.full_path, g.web_url], available_groups)

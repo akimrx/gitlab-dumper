@@ -3,7 +3,7 @@ from functools import cached_property
 from typing import Iterator
 
 from gitlab import Gitlab
-from gitlab.v4.objects import Group, Project
+from gitlab.v4.objects import Group, Project, GroupSubgroup
 
 
 class GitlabClientWrapper:
