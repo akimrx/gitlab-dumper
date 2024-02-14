@@ -17,19 +17,6 @@ GITLAB_PRIVATE_TOKEN=xxxxxx
 - The utility clones over SSH, so make sure that your public key is added to the GitLab profile, [read the doc](https://docs.gitlab.com/ee/user/ssh.html)
 
 
-### Dump
-
-Just run `gitlab-dumper projects dump`
-
-```shell
-Options:
-  --dumps-dir TEXT  Directory for dumps (default: ./dumps).
-  --delay INTEGER   Delay between clones in seconds (default 0).
-  --skip-empty      Ignore empty projects.
-  --exclude TEXT    Comma-separated projects (slug) to exclude.
-  --help            Show this message and exit.
-```
-
 ### Run CLI
 
 Install:
@@ -57,6 +44,19 @@ Groups commands:
 Projects commands:
   dump  Clone or re-pull all available projects.
   list  Show available Gitlab projects
+```
+
+#### Dump
+
+Just run `gitlab-dumper projects dump`
+
+```shell
+Options:
+  --dumps-dir TEXT  Directory for dumps (default: ./dumps).
+  --delay INTEGER   Delay between clones in seconds (default 0).
+  --skip-empty      Ignore empty projects.
+  --exclude TEXT    Comma-separated projects (slug) to exclude.
+  --help            Show this message and exit.
 ```
 
 
