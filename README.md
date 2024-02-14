@@ -1,40 +1,65 @@
-## TL;DR
+# Gitlab dumper
+
+A simple CLI tool for creating a dump of all projects in your Gitlab instance.
+  
+Supports dump as raw repo and archives.
+
+## Preflight
 
 Go to `https://<YOUR_GITLAB_ENDPOINT>/-/profile/personal_access_tokens` and create personal token with permissions:
 - api
 - read_api
 - read_repository
 
+If you want to see all repositories, it may make sense to grant administrator permissions for the access token.
+
+### Configuration
+
 Create `.env` file and put credentials:
 ```bash
 
+LOG_LEVEL="info"
 GITLAB_URL="https://<YOUR_GITLAB_ENDPOINT>"
-GITLAB_PERSONAL_TOKEN="xxxxxx"
+GITLAB_PERSONAL_TOKEN="xxxxxx"  # also, GITLAB_OAUTH_TOKEN supports
 ```
 
 Or set environment variables directly:
 ```bash
+export LOG_LEVEL="info"
 export GITLAB_URL="https://<YOUR_GITLAB_ENDPOINT>"
 export GITLAB_PERSONAL_TOKEN="xxxxxx"
 ```
 
-**Preflight:**
+**Requirements:**
 - The git command line tool must be installed on your PC
-- The utility clones over SSH, so make sure that your public key is added to the GitLab profile, [read the doc](https://docs.gitlab.com/ee/user/ssh.html)
+- The utility clones over SSH, so make sure that your public key is added to the GitLab profile, **[read the doc](https://docs.gitlab.com/ee/user/ssh.html)**
 
 
-### Run CLI
+### Install
 
-#### Install
-
+Using pip:
 ```shell
-make install
+python3 -m venv venv
+source venv/bin/activate
+pip install gitlab-dumper
 
 gitlab-dumper --help
-gitlab-dumper projects --help
 ```
 
-#### Usage
+
+Installing from source:
+```shell
+git clone https://github.com/akimrx/gitlab-dumper  --recursive
+cd gitlab-dumper
+python3 -m venv venv
+source venv/bin/activate
+make install  # or: python3 setup.py install
+
+gitlab-dumper --help
+```
+
+
+## Usage
 
 ```
 Commands:
@@ -47,15 +72,16 @@ Groups commands:
   projects  List projects in group or subgroup.
 
 Projects commands:
-  dump  Clone or re-pull all available projects.
-  list  Show available Gitlab projects
+  dump  Download, clone or re-pull all available projects.
+  list  Show available Gitlab projects.
 ```
 
 #### Dump
 
 Just run `gitlab-dumper projects dump`
+
+Available optional flags: 
 ```
-Options:
   --dumps-dir TEXT   Directory for dumps (default: ./dumps).
   --delay INTEGER    Delay between clones in seconds (default 0).
   --skip-empty       Ignore empty projects.
@@ -65,7 +91,6 @@ Options:
   --exclude TEXT     Comma-separated projects (slug) to exclude.
   --help             Show this message and exit.
 ```
-
 
 ### Development run
 
