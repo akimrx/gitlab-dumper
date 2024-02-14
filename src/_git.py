@@ -15,9 +15,8 @@ def clone_or_update_repo(project: Project, dumps_base_dir: str) -> None:
     project_slug = project.path_with_namespace
     destination_path = os.path.join(dumps_base_dir, *project_slug.split("/"))
 
-    logger.info(f"Clonning {project.path_with_namespace}...")
-
     try:
+        logger.info(f"Clonning {project.path_with_namespace}...")
         GitRepository.clone_from(project.ssh_url_to_repo, to_path=destination_path)
         logger.info(f"Project {project_slug} successfully cloned")
     except GitCommandError:
