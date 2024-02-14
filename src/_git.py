@@ -39,17 +39,20 @@ def save_repo_as_archive(
     project: Project, dumps_base_dir: str, archive_format: Literal["zip", "tar", "tar.gz"] = "tar.gz"
 ) -> None:
     """Download archived repo."""
+    project_slug = project.path_with_namespace
     if project.empty_repo:
-        logger.warning(f"Project {project.path_with_namespace} is empty and can't be download")
+        logger.warning(f"Project {project_slug} is empty and can't be download")
         return
 
-    fully_qualified_slug = project.path_with_namespace.split("/")
+    fully_qualified_slug = project_slug.split("/")
     destination_path = os.path.join(dumps_base_dir, *fully_qualified_slug[:1])
     archive_name = os.path.join(destination_path, f"{fully_qualified_slug[-1]}.{archive_format}")
 
     os.makedirs(destination_path, exist_ok=True)
     with open(archive_name, "wb") as archive:
+        logger.info(f"Downloading {project_slug} to {destination_path}")
         archive.write(project.repository_archive(format=archive_format))
+        logger.info(f"Project {project_slug} successfully saved as {archive_name}")
 
 
 __all__ = ["clone_or_update_repo", "save_repo_as_archive"]
