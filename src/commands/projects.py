@@ -6,7 +6,7 @@ from gitlab.v4.objects import Project
 
 from src._settings import get_settings, get_logger
 from src._gitlab import get_gitlab_client
-from src._git import clone_or_update_repo
+from src._git import clone_or_update_repo, save_repo_as_archive
 from src._utils import bytes_to_human
 
 settings = get_settings()
@@ -30,7 +30,10 @@ def projects_list(no_personal: bool) -> None:
         return bytes_to_human(size)
 
     headers = ["repo", "size", "kind", "url"]
-    table_data = map(lambda p: [p.path_with_namespace, get_project_size(p), p.namespace.get("kind", "–"), p.web_url], available_projects)
+    table_data = map(
+        lambda p: [p.path_with_namespace, get_project_size(p), p.namespace.get("kind", "–"), p.web_url],
+        available_projects,
+    )
     table = tabulate(table_data, headers=headers)
 
     click.echo("")
@@ -49,17 +52,36 @@ def projects_list(no_personal: bool) -> None:
 @click.option("--delay", required=False, type=int, default=0, help="Delay between clones in seconds (default 0).")
 @click.option("--skip-empty", "skip_empty", is_flag=True, default=False, help="Ignore empty projects.")
 @click.option("--no-personal", "no_personal", is_flag=True, default=False, help="Ignore personal user projects.")
+@click.option(
+    "--as-archive",
+    "as_archive",
+    is_flag=True,
+    default=False,
+    help="Download projects as tar.gz archive instead clone.",
+)
+@click.option("--namespaces", required=False, type=str, default=None, help="Comma-separated namespaces to operate.")
 @click.option("--exclude", required=False, type=str, default=None, help="Comma-separated projects (slug) to exclude.")
 def projects_dump(
-    dumps_dir: str, delay: int, skip_empty: bool, no_personal: bool, exclude: list[str] | None = None
+    dumps_dir: str,
+    delay: int,
+    skip_empty: bool,
+    no_personal: bool,
+    as_archive: bool,
+    namespaces: list[str] | None = None,
+    exclude: list[str] | None = None,
 ) -> None:
-    """Clone or re-pull all available projects."""
+    """Download, clone or re-pull all available projects. All flags are optional."""
 
     if exclude is not None:
         exclude = map(lambda item: item.strip(), exclude.split(","))
 
+    if namespaces is not None:
+        exclude = map(lambda item: item.strip().lower(), namespaces.split(","))
+
     failed_projects: list[list[str]] = []
-    all_available_projects = gitlab.fetch_available_projects(exclude=exclude, no_personal=no_personal)
+    all_available_projects = gitlab.fetch_available_projects(
+        exclude=exclude, namespaces=namespaces, no_personal=no_personal
+    )
 
     for project in all_available_projects:
         if project.empty_repo and skip_empty:
@@ -67,7 +89,10 @@ def projects_dump(
             continue
 
         try:
-            clone_or_update_repo(project, dumps_base_dir=dumps_dir)
+            if as_archive:
+                save_repo_as_archive(project, dumps_base_dir=dumps_dir)
+            else:
+                clone_or_update_repo(project, dumps_base_dir=dumps_dir)
         except Exception as e:
             error_msg = f"{e.__class__.__name__}: {str(e)}"
             failed_projects.append([project.path_with_namespace, error_msg])
@@ -76,7 +101,7 @@ def projects_dump(
             logger.exception(e)
 
         if delay > 0:
-            logger.info(f"Waiting delay ({delay}s) before next clone...")
+            logger.info(f"Waiting delay ({delay}s) before next {'download' if as_archive else 'clone'}...")
             time.sleep(delay)
 
     if failed_projects:

@@ -58,7 +58,11 @@ class GitlabClientWrapper:
         return groups
 
     def fetch_available_projects(
-        self, exclude: list[str] | None = None, statistics: bool = False, no_personal: bool = False
+        self,
+        exclude: list[str] | None = None,
+        namespaces: list[str] | None = None,
+        statistics: bool = False,
+        no_personal: bool = False,
     ) -> Iterator[Project]:
         """Find available projects and returns iterator of Project objects."""
         projects = self.client.projects.list(all=True, iterator=True, statistics=statistics)
@@ -66,8 +70,11 @@ class GitlabClientWrapper:
         if no_personal:
             projects = filter(lambda project: project.namespace.get("kind") != "user", projects)
 
+        if namespaces is not None:
+            projects = filter(lambda project: project.namespace.get("path") in namespaces, projects)
+
         if exclude is not None:
-            return filter(lambda project: project.path not in exclude, projects)
+            projects = filter(lambda project: project.path not in exclude, projects)
 
         return projects
 

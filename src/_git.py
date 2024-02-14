@@ -1,4 +1,5 @@
 import os
+from typing import Literal
 
 from src._settings import get_logger
 
@@ -34,4 +35,21 @@ def clone_or_update_repo(project: Project, dumps_base_dir: str) -> None:
             logger.error(f"Possible empty repo or head, skipping pull for {project_slug}")
 
 
-__all__ = ["clone_or_update_repo"]
+def save_repo_as_archive(
+    project: Project, dumps_base_dir: str, archive_format: Literal["zip", "tar", "tar.gz"] = "tar.gz"
+) -> None:
+    """Download archived repo."""
+    if project.empty_repo:
+        logger.warning(f"Project {project.path_with_namespace} is empty and can't be download")
+        return
+
+    fully_qualified_slug = project.path_with_namespace.split("/")
+    destination_path = os.path.join(dumps_base_dir, *fully_qualified_slug[:1])
+    archive_name = os.path.join(destination_path, f"{fully_qualified_slug[-1]}.{archive_format}")
+
+    os.makedirs(destination_path, exist_ok=True)
+    with open(archive_name, "wb") as archive:
+        archive.write(project.repository_archive(format=archive_format))
+
+
+__all__ = ["clone_or_update_repo", "save_repo_as_archive"]

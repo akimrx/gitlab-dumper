@@ -54,15 +54,16 @@ Projects commands:
 #### Dump
 
 Just run `gitlab-dumper projects dump`
-
 ```
 Options:
-  --dumps-dir TEXT  Directory for dumps (default: ./dumps).
-  --delay INTEGER   Delay between clones in seconds (default 0).
-  --skip-empty      Ignore empty projects.
-  --no-personal     Ignore personal user projects.
-  --exclude TEXT    Comma-separated projects (slug) to exclude.
-  --help            Show this message and exit.
+  --dumps-dir TEXT   Directory for dumps (default: ./dumps).
+  --delay INTEGER    Delay between clones in seconds (default 0).
+  --skip-empty       Ignore empty projects.
+  --no-personal      Ignore personal user projects.
+  --as-archive       Download projects as tar.gz archive instead clone.
+  --namespaces TEXT  Comma-separated namespaces to operate.
+  --exclude TEXT     Comma-separated projects (slug) to exclude.
+  --help             Show this message and exit.
 ```
 
 
