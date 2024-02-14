@@ -8,7 +8,7 @@ logger = get_logger()
 gitlab = get_gitlab_client(get_settings())
 
 
-@click.group("group")
+@click.group("groups")
 def groups_cli_commands() -> None:
     """Operations with Gitlab groups."""
 

@@ -43,4 +43,4 @@ def tree() -> None:
 
     click.echo(tree)
     click.echo("")
-    click.secho(f"Total projects found: {projects_counter}", color="cyan")
+    click.secho(f"Total projects found: {projects_counter}", fg="cyan")

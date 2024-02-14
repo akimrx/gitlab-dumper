@@ -11,6 +11,7 @@ backend/**/.mongo
 backend/**/.test_mongo
 backend/**/.redis
 **/.python-version
+dumps
 
 # C extensions
 *.so
