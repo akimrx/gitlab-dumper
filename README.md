@@ -31,6 +31,7 @@ export GITLAB_PERSONAL_TOKEN="xxxxxx"
 ```
 
 **Requirements:**
+- Python >= 3.10
 - The git command line tool must be installed on your PC
 - The utility clones over SSH, so make sure that your public key is added to the GitLab profile, **[read the doc](https://docs.gitlab.com/ee/user/ssh.html)**
 
