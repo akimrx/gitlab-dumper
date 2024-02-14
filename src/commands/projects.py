@@ -2,10 +2,12 @@ import click
 import time
 
 from tabulate import tabulate
+from gitlab.v4.objects import Project
 
 from src._settings import get_settings, get_logger
 from src._gitlab import get_gitlab_client
 from src._git import clone_or_update_repo
+from src._utils import bytes_to_human
 
 settings = get_settings()
 logger = get_logger()
@@ -20,10 +22,14 @@ def projects_cli_commands() -> None:
 @projects_cli_commands.command("list")
 def projects_list() -> None:
     """Show available Gitlab projects."""
-    available_projects = gitlab.fetch_available_projects()
+    available_projects = gitlab.fetch_available_projects(statistics=True)
 
-    headers = ["repo", "url"]
-    table_data = map(lambda p: [p.path_with_namespace, p.web_url], available_projects)
+    def get_project_size(project: Project) -> str:
+        size = project.statistics.get("repository_size", 0)
+        return bytes_to_human(size)
+
+    headers = ["repo", "size", "url"]
+    table_data = map(lambda p: [p.path_with_namespace, get_project_size(p), p.web_url], available_projects)
     table = tabulate(table_data, headers=headers)
 
     click.echo("")

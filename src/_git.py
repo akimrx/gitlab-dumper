@@ -32,3 +32,6 @@ def clone_or_update_repo(project: Project, dumps_base_dir: str) -> None:
             logger.info(f"Successfully pulled {project_slug} from remote origin")
         except (GitCommandError, ValueError):
             logger.error(f"Possible empty repo or head, skipping pull for {project_slug}")
+
+
+__all__ = ["clone_or_update_repo"]

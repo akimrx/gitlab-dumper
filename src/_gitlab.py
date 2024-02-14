@@ -57,9 +57,11 @@ class GitlabClientWrapper:
 
         return groups
 
-    def fetch_available_projects(self, exclude: list[str] | None = None) -> Iterator[Project]:
+    def fetch_available_projects(
+        self, exclude: list[str] | None = None, statistics: bool = False
+    ) -> Iterator[Project]:
         """Find available projects and returns iterator of Project objects."""
-        projects = self.client.projects.list(all=True, iterator=True)
+        projects = self.client.projects.list(all=True, iterator=True, statistics=statistics)
 
         if exclude is None:
             return projects
