@@ -55,6 +55,7 @@ Options:
   --dumps-dir TEXT  Directory for dumps (default: ./dumps).
   --delay INTEGER   Delay between clones in seconds (default 0).
   --skip-empty      Ignore empty projects.
+  --no-personal     Ignore personal user projects.
   --exclude TEXT    Comma-separated projects (slug) to exclude.
   --help            Show this message and exit.
 ```

@@ -20,9 +20,11 @@ def projects_cli_commands() -> None:
 
 
 @projects_cli_commands.command("list")
-def projects_list() -> None:
+@click.option("--no-personal", "no_personal", is_flag=True, default=False, help="Hide personal user projects.")
+def projects_list(no_personal: bool) -> None:
     """Show available Gitlab projects."""
-    available_projects = gitlab.fetch_available_projects(statistics=True)
+    available_projects = gitlab.fetch_available_projects(statistics=True, no_personal=no_personal)
+    print(list(map(lambda x: [x.path_with_namespace, x.namespace.get("kind")], available_projects)))
 
     def get_project_size(project: Project) -> str:
         size = project.statistics.get("repository_size", 0)
@@ -47,15 +49,18 @@ def projects_list() -> None:
 )
 @click.option("--delay", required=False, type=int, default=0, help="Delay between clones in seconds (default 0).")
 @click.option("--skip-empty", "skip_empty", is_flag=True, default=False, help="Ignore empty projects.")
+@click.option("--no-personal", "no_personal", is_flag=True, default=False, help="Ignore personal user projects.")
 @click.option("--exclude", required=False, type=str, default=None, help="Comma-separated projects (slug) to exclude.")
-def projects_dump(dumps_dir: str, delay: int, skip_empty: bool, exclude: list[str] | None = None) -> None:
+def projects_dump(
+    dumps_dir: str, delay: int, skip_empty: bool, no_personal: bool, exclude: list[str] | None = None
+) -> None:
     """Clone or re-pull all available projects."""
 
     if exclude is not None:
         exclude = map(lambda item: item.strip(), exclude.split(","))
 
     failed_projects: list[list[str]] = []
-    all_available_projects = gitlab.fetch_available_projects(exclude=exclude)
+    all_available_projects = gitlab.fetch_available_projects(exclude=exclude, no_personal=no_personal)
 
     for project in all_available_projects:
         if project.empty_repo and skip_empty:
