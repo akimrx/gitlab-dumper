@@ -11,7 +11,7 @@ class Settings(BaseSettings):
 
     GITLAB_URL: str
     GITLAB_OAUTH_TOKEN: str | None = None
-    GITLAB_PRIVATE_TOKEN: str | None = None
+    GITLAB_PERSONAL_TOKEN: str | None = None
 
     DEFAULT_DUMP_DIR: str = "./dumps"
     LOG_LEVEL: Literal["debug", "info", "warning", "error"] = "info"

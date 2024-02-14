@@ -13,11 +13,11 @@ class GitlabClientWrapper:
         self,
         endpoint: str,
         oauth_token: str | None = None,
-        private_token: str | None = None,
+        personal_token: str | None = None,
     ) -> None:
         self.endpoint = endpoint
         self.oauth_token = oauth_token
-        self.private_token = private_token
+        self.personal_token = personal_token
 
     @cached_property
     def client(self) -> Gitlab:
@@ -29,13 +29,13 @@ class GitlabClientWrapper:
         """Validate Gitlab authentification."""
         if self.endpoint is None:
             raise RuntimeError("Gitlab endpoint url is empty")
-        if not any((self.private_token, self.oauth_token)):
+        if not any((self.personal_token, self.oauth_token)):
             raise RuntimeError("Gitlab OAuth or Private token required")
-        if all((self.private_token, self.oauth_token)):
+        if all((self.personal_token, self.oauth_token)):
             raise RuntimeError("Only one of Gitlab token can be used")
 
-        if self.private_token:
-            auth = {"private_token": self.private_token}
+        if self.personal_token:
+            auth = {"private_token": self.personal_token}
         elif self.oauth_token:
             auth = {"oauth_token": self.oauth_token}
         return auth
@@ -58,25 +58,25 @@ class GitlabClientWrapper:
         return groups
 
     def fetch_available_projects(
-        self, exclude: list[str] | None = None, statistics: bool = False, no_personal: bool = True
+        self, exclude: list[str] | None = None, statistics: bool = False, no_personal: bool = False
     ) -> Iterator[Project]:
         """Find available projects and returns iterator of Project objects."""
         projects = self.client.projects.list(all=True, iterator=True, statistics=statistics)
 
-        if exclude is None:
-            return projects
-
         if no_personal:
             projects = filter(lambda project: project.namespace.get("kind") != "user", projects)
 
-        return filter(lambda project: project.path not in exclude, projects)
+        if exclude is not None:
+            return filter(lambda project: project.path not in exclude, projects)
+
+        return projects
 
 
 def get_gitlab_client(settings: Settings) -> GitlabClientWrapper:
     return GitlabClientWrapper(
         endpoint=settings.GITLAB_URL,
         oauth_token=settings.GITLAB_OAUTH_TOKEN,
-        private_token=settings.GITLAB_PRIVATE_TOKEN,
+        personal_token=settings.GITLAB_PERSONAL_TOKEN,
     )
 
 

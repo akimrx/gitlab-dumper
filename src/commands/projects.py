@@ -24,14 +24,13 @@ def projects_cli_commands() -> None:
 def projects_list(no_personal: bool) -> None:
     """Show available Gitlab projects."""
     available_projects = gitlab.fetch_available_projects(statistics=True, no_personal=no_personal)
-    print(list(map(lambda x: [x.path_with_namespace, x.namespace.get("kind")], available_projects)))
 
     def get_project_size(project: Project) -> str:
         size = project.statistics.get("repository_size", 0)
         return bytes_to_human(size)
 
-    headers = ["repo", "size", "url"]
-    table_data = map(lambda p: [p.path_with_namespace, get_project_size(p), p.web_url], available_projects)
+    headers = ["repo", "size", "kind", "url"]
+    table_data = map(lambda p: [p.path_with_namespace, get_project_size(p), p.namespace.get("kind", "–"), p.web_url], available_projects)
     table = tabulate(table_data, headers=headers)
 
     click.echo("")

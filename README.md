@@ -1,15 +1,21 @@
 ## TL;DR
 
-Go to `https://<your_gitlab_domain>/-/profile/personal_access_tokens` and create personal token with permissions:
+Go to `https://<YOUR_GITLAB_ENDPOINT>/-/profile/personal_access_tokens` and create personal token with permissions:
 - api
 - read_api
 - read_repository
 
 Create `.env` file and put credentials:
-```shell
+```bash
 
-GITLAB_URL=https://<your_gitlab_domain>
-GITLAB_PRIVATE_TOKEN=xxxxxx
+GITLAB_URL="https://<YOUR_GITLAB_ENDPOINT>"
+GITLAB_PERSONAL_TOKEN="xxxxxx"
+```
+
+Or set environment variables directly:
+```bash
+export GITLAB_URL="https://<YOUR_GITLAB_ENDPOINT>"
+export GITLAB_PERSONAL_TOKEN="xxxxxx"
 ```
 
 **Preflight:**
@@ -30,8 +36,7 @@ gitlab-dumper projects --help
 
 #### Usage
 
-```shell
-
+```
 Commands:
   groups    Operations with Gitlab groups.
   projects  Operations with Gitlab projects.
@@ -50,7 +55,7 @@ Projects commands:
 
 Just run `gitlab-dumper projects dump`
 
-```shell
+```
 Options:
   --dumps-dir TEXT  Directory for dumps (default: ./dumps).
   --delay INTEGER   Delay between clones in seconds (default 0).
