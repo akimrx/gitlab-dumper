@@ -44,9 +44,9 @@ def save_repo_as_archive(
         logger.warning(f"Project {project_slug} is empty and can't be download")
         return
 
-    fully_qualified_slug = project_slug.split("/")
-    destination_path = os.path.join(dumps_base_dir, *fully_qualified_slug[:1])
-    archive_name = os.path.join(destination_path, f"{fully_qualified_slug[-1]}.{archive_format}")
+    path_slugs = project_slug.split("/")
+    destination_path = os.path.join(dumps_base_dir, *path_slugs[:1])
+    archive_name = os.path.join(destination_path, f"{path_slugs[-1]}.{archive_format}")
 
     os.makedirs(destination_path, exist_ok=True)
     with open(archive_name, "wb") as archive:
