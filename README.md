@@ -19,7 +19,7 @@ GITLAB_PRIVATE_TOKEN=xxxxxx
 
 ### Run CLI
 
-Install:
+#### Install
 
 ```shell
 make install
@@ -28,7 +28,7 @@ gitlab-dumper --help
 gitlab-dumper projects --help
 ```
 
-Usage:
+#### Usage
 
 ```shell
 
