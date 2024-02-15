@@ -2,6 +2,7 @@ import os
 from typing import Literal
 
 from src._settings import get_logger
+from src._utils import safe_resolve_path
 
 from git import Repo as GitRepository
 from git.exc import GitCommandError
@@ -14,7 +15,7 @@ logger = get_logger()
 def clone_or_update_repo(project: Project, dumps_base_dir: str, dry_run: bool = False) -> None:
     """Clone repo from remote origin or pull fresh changes if exists."""
     project_slug = project.path_with_namespace
-    destination_path = os.path.join(dumps_base_dir, *project_slug.split("/"))
+    destination_path = os.path.join(safe_resolve_path(dumps_base_dir), *project_slug.split("/"))
 
     if dry_run:
         logger.info(f"Simulate clonning {project_slug} to {destination_path}")
@@ -52,7 +53,7 @@ def save_repo_as_archive(
         return
 
     breadcrumbs = project_slug.split("/")
-    destination_path = os.path.join(dumps_base_dir, *breadcrumbs[:1])
+    destination_path = os.path.join(safe_resolve_path(dumps_base_dir), *breadcrumbs[:1])
     archive_name = os.path.join(destination_path, f"{breadcrumbs[-1]}.{archive_format}")
 
     if dry_run:

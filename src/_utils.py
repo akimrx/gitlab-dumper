@@ -1,4 +1,6 @@
-def bytes_to_human(data: int, granularity=1):
+import os
+
+def bytes_to_human(data: int, granularity=1) -> str:
     """Convert bytes to human format with binary prefix."""
     _bytes = int(data)
     result = []
@@ -20,6 +22,17 @@ def bytes_to_human(data: int, granularity=1):
                 _bytes -= value * count
                 result.append(f"{value}{name}")
         return ", ".join(result[:granularity])
+
+
+def safe_resolve_path(path: str) -> str:
+    """Safe convert path to absolute."""
+    if path.startswith("~"):
+        return os.path.expanduser(path)
+
+    elif path.startswith(".") or not path.startswith("/"):
+        return os.path.abspath(path)
+
+    return path
 
 
 __all__ = ["bytes_to_human"]
