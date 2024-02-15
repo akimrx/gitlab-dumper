@@ -35,4 +35,4 @@ def safe_resolve_path(path: str) -> str:
     return path
 
 
-__all__ = ["bytes_to_human"]
+__all__ = ["bytes_to_human", "safe_resolve_path"]
