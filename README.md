@@ -79,7 +79,9 @@ Projects commands:
 
 #### Dump
 
-Just run `gitlab-dumper projects dump`
+Before really dump use `--dry-run` flag, example: `gitlab-dumper projects dump --namespaces foo,bar --no-personal --dry-run`  
+For full dump just use `gitlab-dumper projects dump`
+
 
 Available optional flags: 
 ```
@@ -88,6 +90,7 @@ Available optional flags:
   --skip-empty       Ignore empty projects.
   --no-personal      Ignore personal user projects.
   --as-archive       Download projects as tar.gz archive instead clone.
+  --dry-run          Safe simulate dump without download/clone.
   --namespaces TEXT  Comma-separated namespaces to operate.
   --exclude TEXT     Comma-separated projects (slug) to exclude.
   --help             Show this message and exit.

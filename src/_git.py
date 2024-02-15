@@ -11,10 +11,14 @@ from gitlab.v4.objects import Project
 logger = get_logger()
 
 
-def clone_or_update_repo(project: Project, dumps_base_dir: str) -> None:
+def clone_or_update_repo(project: Project, dumps_base_dir: str, dry_run: bool = False) -> None:
     """Clone repo from remote origin or pull fresh changes if exists."""
     project_slug = project.path_with_namespace
     destination_path = os.path.join(dumps_base_dir, *project_slug.split("/"))
+
+    if dry_run:
+        logger.info(f"Simulate clonning {project_slug} to {destination_path}")
+        return
 
     try:
         logger.info(f"Clonning {project.path_with_namespace}...")
@@ -36,7 +40,10 @@ def clone_or_update_repo(project: Project, dumps_base_dir: str) -> None:
 
 
 def save_repo_as_archive(
-    project: Project, dumps_base_dir: str, archive_format: Literal["zip", "tar", "tar.gz"] = "tar.gz"
+    project: Project,
+    dumps_base_dir: str,
+    dry_run: bool = False,
+    archive_format: Literal["zip", "tar", "tar.gz"] = "tar.gz",
 ) -> None:
     """Download archived repo."""
     project_slug = project.path_with_namespace
@@ -47,6 +54,10 @@ def save_repo_as_archive(
     breadcrumbs = project_slug.split("/")
     destination_path = os.path.join(dumps_base_dir, *breadcrumbs[:1])
     archive_name = os.path.join(destination_path, f"{breadcrumbs[-1]}.{archive_format}")
+
+    if dry_run:
+        logger.info(f"Simulate downloading {archive_name} to {destination_path}")
+        return
 
     os.makedirs(destination_path, exist_ok=True)
     with open(archive_name, "wb") as archive:

@@ -59,6 +59,7 @@ def projects_list(no_personal: bool) -> None:
     default=False,
     help="Download projects as tar.gz archive instead clone.",
 )
+@click.option("--dry-run", "dry_run", is_flag=True, default=False, help="Safe simulate dump without download/clone.")
 @click.option("--namespaces", required=False, type=str, default=None, help="Comma-separated namespaces to operate.")
 @click.option("--exclude", required=False, type=str, default=None, help="Comma-separated projects (slug) to exclude.")
 def projects_dump(
@@ -67,6 +68,7 @@ def projects_dump(
     skip_empty: bool,
     no_personal: bool,
     as_archive: bool,
+    dry_run: bool,
     namespaces: list[str] | None = None,
     exclude: list[str] | None = None,
 ) -> None:
@@ -90,9 +92,9 @@ def projects_dump(
 
         try:
             if as_archive:
-                save_repo_as_archive(project, dumps_base_dir=dumps_dir)
+                save_repo_as_archive(project, dumps_base_dir=dumps_dir, dry_run=dry_run)
             else:
-                clone_or_update_repo(project, dumps_base_dir=dumps_dir)
+                clone_or_update_repo(project, dumps_base_dir=dumps_dir, dry_run=dry_run)
         except Exception as e:
             error_msg = f"{e.__class__.__name__}: {str(e)}"
             failed_projects.append([project.path_with_namespace, error_msg])
