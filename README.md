@@ -79,7 +79,11 @@ Projects commands:
 
 #### Dump
 
-Before really dump use `--dry-run` flag, example: `gitlab-dumper projects dump --namespaces foo,bar --no-personal --dry-run`  
+Before really dump use `--dry-run` flag, for example:
+```shell
+gitlab-dumper projects dump --namespaces foo,bar --no-personal --dry-run
+```
+  
 For full dump just use `gitlab-dumper projects dump`
 
 
