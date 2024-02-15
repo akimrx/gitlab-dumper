@@ -75,10 +75,10 @@ def projects_dump(
     """Download, clone or re-pull all available projects. All flags are optional."""
 
     if exclude is not None:
-        exclude = map(lambda item: item.strip(), exclude.split(","))
+        exclude = map(lambda item: item.strip().lower(), exclude.split(","))
 
     if namespaces is not None:
-        exclude = map(lambda item: item.strip().lower(), namespaces.split(","))
+        namespaces = map(lambda item: item.strip().lower(), namespaces.split(","))
 
     failed_projects: list[list[str]] = []
     all_available_projects = gitlab.fetch_available_projects(

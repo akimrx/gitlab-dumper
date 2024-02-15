@@ -21,7 +21,7 @@ def list_groups(parents_only: bool, subgroups: bool, exclude: str | None = None)
     """Show available Gitlab groups."""
 
     if exclude is not None:
-        exclude = map(lambda item: item.strip(), exclude.split(","))
+        exclude = map(lambda item: item.strip().lower(), exclude.split(","))
 
     available_groups = gitlab.fetch_available_groups(only_parent_groups=parents_only, exclude=exclude)
 
