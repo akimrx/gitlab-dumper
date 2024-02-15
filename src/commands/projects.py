@@ -75,17 +75,19 @@ def projects_dump(
     """Download, clone or re-pull all available projects. All flags are optional."""
 
     if exclude is not None:
-        exclude = map(lambda item: item.strip().lower(), exclude.split(","))
+        exclude = list(map(lambda item: item.strip().lower(), exclude.split(",")))
 
     if namespaces is not None:
-        namespaces = map(lambda item: item.strip().lower(), namespaces.split(","))
+        namespaces = list(map(lambda item: item.strip().lower(), namespaces.split(",")))
 
+    no_matches = True  # hack: for UX friendly message, cause we works with iterators/generators
     failed_projects: list[list[str]] = []
     all_available_projects = gitlab.fetch_available_projects(
         exclude=exclude, namespaces=namespaces, no_personal=no_personal
     )
 
     for project in all_available_projects:
+        no_matches = False
         if project.empty_repo and skip_empty:
             logger.info(f"Repo {project.path_with_namespace} is empty, ignoring")
             continue
@@ -114,3 +116,6 @@ def projects_dump(
         click.secho(f"{len(failed_projects)} project has failed", fg="red")
         click.echo("")
         click.echo(table)
+
+    if no_matches:
+        click.secho("Projects by params not found.", bold=True, fg="yellow")

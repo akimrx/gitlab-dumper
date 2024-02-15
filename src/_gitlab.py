@@ -1,9 +1,11 @@
-from src._settings import Settings
+from src._settings import Settings, get_logger
 from functools import cached_property
 from typing import Iterator
 
 from gitlab import Gitlab
 from gitlab.v4.objects import Group, GroupSubgroup, Project
+
+logger = get_logger()
 
 
 class GitlabClientWrapper:
@@ -44,6 +46,7 @@ class GitlabClientWrapper:
         self, only_parent_groups: bool = False, exclude: list[str] | None = None
     ) -> Iterator[Group]:
         """Find available groups and returns iterator of Group objects."""
+        logger.info(f"Starting search groups with params: {only_parent_groups=} {exclude=}")
         groups: Iterator[Group] = self.client.groups.list(all=True, iterator=True)
 
         if exclude is None and not only_parent_groups:
@@ -65,6 +68,7 @@ class GitlabClientWrapper:
         no_personal: bool = False,
     ) -> Iterator[Project]:
         """Find available projects and returns iterator of Project objects."""
+        logger.info(f"Starting search projects with params: {namespaces=} {exclude=} {no_personal=}")
         projects = self.client.projects.list(all=True, iterator=True, statistics=statistics)
 
         if no_personal:
