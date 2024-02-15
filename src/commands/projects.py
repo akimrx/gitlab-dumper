@@ -105,8 +105,11 @@ def projects_dump(
             logger.exception(e)
 
         if delay > 0:
-            logger.info(f"Waiting delay ({delay}s) before next {'download' if as_archive else 'clone'}...")
-            time.sleep(delay)
+            if dry_run:
+                logger.info(f"Simulate delay for {delay}s before next step")
+            else:
+                logger.info(f"Waiting delay ({delay}s) before next {'download' if as_archive else 'clone'}...")
+                time.sleep(delay)
 
     if failed_projects:
         headers = ["repo", "error"]
