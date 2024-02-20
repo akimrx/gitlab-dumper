@@ -21,6 +21,7 @@ help:
 	@echo "🛠  INSTALL & RELEASE"
 	@echo "---------------------------------------------------------------------"
 	@echo "  install             Install library to site-packages"
+	@echo "  release             Build & push package to PyPI"
 	@echo "  build               Build package"
 	@echo "  build-docker        Build dev docker image"
 	@echo "  clean               Clean build/install artifacts"
@@ -73,6 +74,10 @@ build:
 
 install: clean
 	@python3 setup.py install
+
+release: dist
+	@make dist
+	python3 -m twine upload --repository pypi dist/*
 
 init:
 	@pip3 install -r requirements.txt
