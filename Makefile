@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc dist help test tests sessions
+.PHONY: clean build clean-build clean-pyc dist help test tests sessions
 .DEFAULT_GOAL := help
 
 help:
