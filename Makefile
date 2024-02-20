@@ -75,9 +75,9 @@ build:
 install: clean
 	@python3 setup.py install
 
-release: dist
-	@make dist
-	python3 -m twine upload --repository pypi dist/*
+release: build
+	@make build
+	@python3 -m twine upload --repository pypi dist/*
 
 init:
 	@pip3 install -r requirements.txt
