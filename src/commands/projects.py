@@ -1,6 +1,7 @@
 import click
 import time
 
+from functools import reduce
 from tabulate import tabulate
 from gitlab.v4.objects import Project
 
@@ -21,12 +22,21 @@ def projects_cli_commands() -> None:
 
 @projects_cli_commands.command("list")
 @click.option("--no-personal", "no_personal", is_flag=True, default=False, help="Hide personal user projects.")
-def projects_list(no_personal: bool) -> None:
+@click.option("--total-size", "total_size", is_flag=True, default=False, help="Calculate total size.")
+def projects_list(no_personal: bool, total_size: bool) -> None:
     """Show available Gitlab projects."""
     available_projects = gitlab.fetch_available_projects(statistics=True, no_personal=no_personal)
 
-    def get_project_size(project: Project) -> str:
+    if total_size and not isinstance(available_projects, list):
+        # by default 'fetch_available_projects' returns iterator,
+        # that first iteration processing leaves an empty list
+        # and data not available for next map/filter calls
+        available_projects = list(available_projects)
+
+    def get_project_size(project: Project, as_bytes: bool = False) -> str:
         size = project.statistics.get("repository_size", 0)
+        if as_bytes:
+            return int(size)
         return bytes_to_human(size)
 
     headers = ["repo", "size", "kind", "url"]
@@ -38,6 +48,13 @@ def projects_list(no_personal: bool) -> None:
 
     click.echo("")
     click.echo(table)
+
+    if total_size:
+        projects_total_size_raw = map(lambda p: get_project_size(p, as_bytes=True), available_projects)
+        project_total_size = bytes_to_human(reduce(lambda a, b: a + b, projects_total_size_raw, 0), granularity=2)
+
+        click.echo("")
+        click.secho(f"Total size: {project_total_size}", fg="cyan")
 
 
 @projects_cli_commands.command("dump")
