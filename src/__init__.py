@@ -1,4 +1,4 @@
-__version__ = "0.0.1"
+__version__ = "0.1.1"
 author = "akimrx"
 author_email = "akimstrong@yandex.ru"
 description = "CLI tool for dump Gitlab projects"
